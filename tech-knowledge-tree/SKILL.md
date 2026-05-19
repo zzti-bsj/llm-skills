@@ -80,10 +80,11 @@ enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知
 
 1. Read all existing docs in the topic directory（避免重复已有内容）
 2. 确定一种接入方式（选择主流的、生产验证过的库/服务）
-3. Generate a `mastery-<approach>.md` containing:
+3. Generate a `mastery/<approach>.md` containing:
    - **场景（Scenario）**: 真实应用场景（不是抽象练习题）
    - **目标（Target）**: 完成后的可验证交付物
    - **技术选型（Tooling）**: 使用的具体库/服务及理由
+   - **参考资料（References）**: 官方文档、GitHub repo、API reference 等链接锚点
    - **分步引导（Steps）**: 每步包含「做什么」「怎么做」「为什么」
 4. 分步数量 3-6 步，每步 5-10 分钟
 5. 文件命名体现接入方式，如 `mastery-jsonwebtoken.md`、`mastery-auth0.md`
