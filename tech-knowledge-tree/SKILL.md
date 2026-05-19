@@ -1,34 +1,30 @@
 ---
 name: tech-knowledge-tree
-description: Two categories of triggers. (1) Project-bound: after completing a technical module in current conversation/project, archive it into the knowledge tree (enrich). (2) Abstract/project-independent: deepen understanding of any technology topic, walk the knowledge tree to discover gaps, organize directory structure, or add historical evolution context. Deepen generates hands-on implementation exercises and question-driven analysis docs. Walk produces observation reports. All abstract modes operate on the knowledge tree itself, not on current project context.
+description: Two categories of triggers. (1) Project-bound: after completing a technical module in current conversation/project, archive it into the knowledge tree (enrich). (2) Abstract/project-independent: quickly learn how to integrate a technology into production using existing tools (mastery), deepen understanding through question-driven analysis (deepen), walk the knowledge tree to discover gaps (walk), organize directory structure, or add historical evolution context. All abstract modes operate on the knowledge tree itself, not on current project context.
 ---
 
 # Tech Knowledge Tree
 
 ## Quick Reference
 
-When user asks what this skill can do, or is unsure which mode to use, show this:
+When user says `help` or asks what this skill can do, show this:
 
 ```
-tech-knowledge-tree 命令速查：
+用法: tech-knowledge-tree <command> [topic]
 
-enrich <technology>   刚做完一个技术模块，归档到知识树
-  → "我刚实现了 JWT 双 token，帮我归档"
+Commands:
+  help               显示本帮助
+  enrich <tech>      归档刚做完的技术模块
+  mastery <topic>    快速接入生产（可多次，累积不同方式）
+  deepen <topic>     问题驱动深入理解
+  walk <topic>       漫步知识树，发现遗漏和连接
+  walk /             扫描整棵知识树
+  organize           按逻辑关系重组目录结构
+  history <topic>    添加历史演进脉络
 
-deepen <topic>        深入某个主题，先动手实现再深入理解
-  → "deepen jwt" → 先生成实战引导，做完后可选问题深化
-  → "deepen jwt #2" → 直接写第 N 个候选问题的文档
-  → "refresh" → 换一个实战场景
-
-walk <topic>          漫步已有知识，发现遗漏和连接
-  → "walk jwt" → 觉察报告（不生成文件）
-  → "walk /" → 扫描整棵知识树
-
-organize              按逻辑关系重组目录结构
-  → "帮我整理一下 docs"
-
-history <topic>       给某个技术添加历史演进脉络
-  → "给 jwt 加一下历史脉络"
+Options:
+  refresh            mastery: 换一种接入方式
+  #N                 deepen: 直接写第 N 个候选问题的文档
 ```
 
 用户不需要记住命令——用自然语言描述意图，系统自动匹配模式。
@@ -49,8 +45,8 @@ Core purpose: **肃清本源，形成知识图谱，起指引作用。** Not a c
 ### 项目绑定：enrich（归档）
 enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知识，输入源是「你刚刚做了什么」。
 
-### 抽象操作：deepen / walk / organize / history
-这四个模式与当前项目无关。输入源是知识树本身，不关心你在做什么项目。`deepen jwt` 不需要你刚实现过 JWT。
+### 抽象操作：mastery / deepen / walk / organize / history
+这五个模式与当前项目无关。输入源是知识树本身，不关心你在做什么项目。
 
 ---
 
@@ -70,33 +66,45 @@ enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知
 6. Write specific implementation doc, named by topic + project tag (e.g., `dual-token【RLSys】.md`)
 7. Keep it lightweight — only the essence, don't over-document
 
-### deepen (深化)
-**Trigger:** User wants to go deeper on a topic.
+### mastery (快速投产)
+**Trigger:** User wants to quickly learn how to integrate a technology into production.
 
-**Philosophy:** 先用起来，再深入理解。Quick Mastery 追求快速投产，不是从零造轮子。
-
-**Two-phase process:**
-
-#### Phase 1: Quick Mastery（必经第一步）
-用现成的服务/库/工具，结合用户的技术栈，快速接入技术，快速验证效果。
+**Philosophy:** 用现成工具快速接入，不造轮子。30 分钟内跑通，验证效果。
 
 **核心原则：**
 - 不手撸底层实现——用成熟的库和服务
 - 追求最快接入路径——30 分钟内看到效果
-- 结合用户实际技术栈——不搞脱离实际的技术选型
-- 理解和底层原理留给 Phase 2 和 walk
+- 理解和底层原理不是 mastery 的职责，那是 deepen 的事
 
-1. Read all existing docs in the topic directory
-2. Generate a `quick-mastery.md` containing:
+**流程：**
+
+1. Read all existing docs in the topic directory（避免重复已有内容）
+2. 确定一种接入方式（选择主流的、生产验证过的库/服务）
+3. Generate a `mastery-<approach>.md` containing:
    - **场景（Scenario）**: 真实应用场景（不是抽象练习题）
    - **目标（Target）**: 完成后的可验证交付物
-   - **技术选型（Tooling）**: 基于用户技术栈推荐的成熟库/服务
+   - **技术选型（Tooling）**: 使用的具体库/服务及理由
    - **分步引导（Steps）**: 每步包含「做什么」「怎么做」「为什么」
-3. 分步数量 3-6 步，每步 5-10 分钟
-4. 技术栈匹配用户当前项目（如果已知）
-5. 用户说 `refresh` → 重新生成场景，保持同一技术主题
+4. 分步数量 3-6 步，每步 5-10 分钟
+5. 文件命名体现接入方式，如 `mastery-jsonwebtoken.md`、`mastery-auth0.md`
+6. 每次调用生成一种新的接入方式，可累积多个 mastery 文档
+7. 用户说 `refresh` → 重新生成一种不同的接入方式
 
-#### Phase 2: 问题驱动深化（可选，做完 Phase 1 后）
+**多方式累积示例：**
+```
+jwt/
+  mastery/
+    jsonwebtoken.md          # 第1次：用 jsonwebtoken 库自己签发
+    auth0.md                 # 第2次：用 Auth0 SaaS 接入
+    nextauth.md              # 第3次：用 NextAuth 框架集成
+```
+
+### deepen (深化)
+**Trigger:** User wants to deeply understand a topic.
+
+**Philosophy:** 问题驱动，追问本质。生成有深度的问题，写出有论证的分析文档。
+
+**流程：**
 
 1. 读取该目录下所有已有文档
 2. 生成 3-5 个候选问题，每个问题满足：
@@ -174,7 +182,8 @@ The README in each topic directory is the most important document. It should:
 
 ```
 enrich（归档）  → 创建知识（README + 实现文档）
-deepen（深化）  → 深化知识（Quick Mastery → 问题驱动）
+mastery（投产） → 快速接入（多种方式，可累积）
+deepen（深化）  → 深化理解（问题驱动分析）
 walk（漫步）    → 觉察知识（发现遗漏和连接）
 organize（整理）→ 重组知识（按逻辑关系调整结构）
 history（脉络） → 追溯知识（添加历史演进上下文）
@@ -183,6 +192,7 @@ history（脉络） → 追溯知识（添加历史演进上下文）
 Walk 发现的问题 → Deepen 解答。
 Deepen 新增的文档可能触发 → Organize 重构。
 History 添加的演进脉络可以成为 → Deepen 的素材。
+Mastery 的多种接入方式 → 互补覆盖，每种对应不同场景。
 
 ## Example
 
@@ -197,17 +207,19 @@ docs/
         dual-token【RLSys】.md        # The specific access+refresh token pattern implemented
 ```
 
-User deepens the `jwt` topic:
+User explores the `jwt` topic over time:
 
 ```
 docs/
   web-security/
     authentication/
       jwt/
-        README.md                     # 本质：为什么存在
-        dual-token【RLSys】.md       # enrich 生成：具体实现
-        quick-mastery.md              # deepen 阶段1：强制实战
-        stateless-myth.md             # deepen 阶段2：「无状态」真的是优势吗？
-        jwt-vs-session-real-world.md  # deepen 阶段2：生产环境怎么选？
-        key-rotation【RLSys】.md      # deepen 阶段2：密钥轮换
+        README.md                       # 本质：为什么存在
+        dual-token【RLSys】.md         # enrich：具体实现
+        mastery/
+          jsonwebtoken.md               # mastery 第1次：用 jsonwebtoken 库接入
+          auth0.md                      # mastery 第2次：用 Auth0 SaaS 接入
+        stateless-myth.md               # deepen：「无状态」真的是优势吗？
+        jwt-vs-session-real-world.md    # deepen：生产环境怎么选？
+        key-rotation【RLSys】.md        # deepen：密钥轮换
 ```
