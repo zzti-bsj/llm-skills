@@ -1,6 +1,6 @@
 ---
 name: tech-knowledge-tree
-description: Use when completing a technical module and wanting to archive the implementation as knowledge, or when user wants to organize, deepen, walk, or add historical context to the docs/ knowledge tree. Triggers include finishing any technical feature implementation, wanting to restructure docs/, wanting to expand a specific technology topic, wanting to practice implementing a technology hands-on, or wanting to review existing knowledge for gaps and connections.
+description: Two categories of triggers. (1) Project-bound: after completing a technical module in current conversation/project, archive it into the knowledge tree (enrich). (2) Abstract/project-independent: deepen understanding of any technology topic, walk the knowledge tree to discover gaps, organize directory structure, or add historical evolution context. Deepen generates hands-on implementation exercises and question-driven analysis docs. Walk produces observation reports. All abstract modes operate on the knowledge tree itself, not on current project context.
 ---
 
 # Tech Knowledge Tree
@@ -44,7 +44,17 @@ Core purpose: **肃清本源，形成知识图谱，起指引作用。** Not a c
 - Default: `~/Project/docs`
 - Each user sets their own path
 
-## Five Modes
+## Two Categories
+
+### 项目绑定：enrich（归档）
+enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知识，输入源是「你刚刚做了什么」。
+
+### 抽象操作：deepen / walk / organize / history
+这四个模式与当前项目无关。输入源是知识树本身，不关心你在做什么项目。`deepen jwt` 不需要你刚实现过 JWT。
+
+---
+
+## Mode Details
 
 ### enrich (归档)
 **Trigger:** After completing a technical module.
@@ -63,19 +73,26 @@ Core purpose: **肃清本源，形成知识图谱，起指引作用。** Not a c
 ### deepen (深化)
 **Trigger:** User wants to go deeper on a topic.
 
-**Philosophy:** 先长脑子，再长知识。Force the user to implement first, then deepen understanding through targeted questions.
+**Philosophy:** 先用起来，再深入理解。Quick Mastery 追求快速投产，不是从零造轮子。
 
 **Two-phase process:**
 
 #### Phase 1: Quick Mastery（必经第一步）
-以已经实现过这个过程的高级工程师视角，强制用户动手实现。不是让用户思考——只要求动手。
+用现成的服务/库/工具，结合用户的技术栈，快速接入技术，快速验证效果。
+
+**核心原则：**
+- 不手撸底层实现——用成熟的库和服务
+- 追求最快接入路径——30 分钟内看到效果
+- 结合用户实际技术栈——不搞脱离实际的技术选型
+- 理解和底层原理留给 Phase 2 和 walk
 
 1. Read all existing docs in the topic directory
 2. Generate a `quick-mastery.md` containing:
    - **场景（Scenario）**: 真实应用场景（不是抽象练习题）
    - **目标（Target）**: 完成后的可验证交付物
+   - **技术选型（Tooling）**: 基于用户技术栈推荐的成熟库/服务
    - **分步引导（Steps）**: 每步包含「做什么」「怎么做」「为什么」
-3. 分步数量 3-6 步，每步 10-15 分钟
+3. 分步数量 3-6 步，每步 5-10 分钟
 4. 技术栈匹配用户当前项目（如果已知）
 5. 用户说 `refresh` → 重新生成场景，保持同一技术主题
 
