@@ -5,7 +5,36 @@ description: Use when completing a technical module and wanting to archive the i
 
 # Tech Knowledge Tree
 
+## Quick Reference
+
+When user asks what this skill can do, or is unsure which mode to use, show this:
+
+```
+tech-knowledge-tree 命令速查：
+
+enrich <technology>   刚做完一个技术模块，归档到知识树
+  → "我刚实现了 JWT 双 token，帮我归档"
+
+deepen <topic>        深入某个主题，先动手实现再深入理解
+  → "deepen jwt" → 先生成实战引导，做完后可选问题深化
+  → "deepen jwt #2" → 直接写第 N 个候选问题的文档
+  → "refresh" → 换一个实战场景
+
+walk <topic>          漫步已有知识，发现遗漏和连接
+  → "walk jwt" → 觉察报告（不生成文件）
+  → "walk /" → 扫描整棵知识树
+
+organize              按逻辑关系重组目录结构
+  → "帮我整理一下 docs"
+
+history <topic>       给某个技术添加历史演进脉络
+  → "给 jwt 加一下历史脉络"
+```
+
+用户不需要记住命令——用自然语言描述意图，系统自动匹配模式。
+
 ## Overview
+
 Maintain a living knowledge tree that organizes technologies by conceptual hierarchy. Grows organically as the project encounters new technologies.
 
 Core purpose: **肃清本源，形成知识图谱，起指引作用。** Not a comprehensive reference, but a compass.
