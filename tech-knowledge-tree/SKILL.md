@@ -151,6 +151,7 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
 - Scan directory structure only, not content
 - Reorganize by logical relationships between topics
 - Ensure progressive layering (broad → specific)
+- **移动文件前先判断位置语义** — 文件的层级表达其概念范畴（如 `authentication/why-bearer.md` 表示 Bearer 是认证层概念）。位置语义正确的不动，语义错位的才移动（如 `ai-llm/llm-application/jwt/` 放错了领域）
 - **自动生成知识索引**：organize 完成后，在根目录生成 `INDEX.md`
   - 中文层级结构 + 可点击链接
   - Mode 名称用中文：深化 (deepen)、快速投产 (mastery)
@@ -209,7 +210,7 @@ The README in each topic directory is the most important document. It should:
 
 ## Key Principles
 
-- **Directory > File**: Every technology topic is a directory with a `README.md`
+- **Directory > File**: 新建技术主题时，每个主题是一个目录（含 `README.md`），不是单个文件。已有文件的位置携带语义（层级即语义），organize 时需先理解位置含义再决定是否移动。
 - **Lightweight start**: Begin with minimal content, grow as needed
 - **Auto-derive hierarchy**: Don't hardcode top-level categories, let the structure emerge from the technology's conceptual relationships
 - **Chinese content, English directory names**
