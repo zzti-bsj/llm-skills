@@ -27,7 +27,6 @@ Commands:
 Options:
   refresh            mastery: 换一种接入方式
   #N                 deepen: 直接写第 N 个候选问题的文档
-  scan               interview: AI 调用 interview.py scan 扫描文档
 ```
 
 用户不需要记住命令——用自然语言描述意图，系统自动匹配模式。
