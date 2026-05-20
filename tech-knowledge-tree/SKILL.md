@@ -153,11 +153,25 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
 - Ensure progressive layering (broad → specific)
 - **移动文件前先判断位置语义** — 文件的层级表达其概念范畴（如 `authentication/why-bearer.md` 表示 Bearer 是认证层概念）。位置语义正确的不动，语义错位的才移动（如 `ai-llm/llm-application/jwt/` 放错了领域）
 - **自动生成知识索引**：organize 完成后，在根目录生成 `INDEX.md`
-  - 中文层级结构 + 可点击链接
-  - Mode 名称用中文：深化 (deepen)、快速投产 (mastery)
-  - 无描述，纯结构，每个文件都是锚点
-  - 仅在对应子目录存在时显示该 mode 分类（如无 deepen/ 则不显示"深化"）
+  - 采用目录树格式（`├──` `└──` `│`），完整呈现目录层级结构
+  - 每个**主题目录**（含 README.md 的目录）显示为可点击链接；普通目录和文件显示为纯文本
+  - Mode 目录名用中文：`深化/` (deepen)、`快速投产/` (mastery)；仅在实际存在时显示
+  - **必须保留所有中间目录层级** — 即使某目录没有自己的 README.md，只要它是实际存在的目录，就必须在树中体现，因为目录层级本身就是语义
   - 完全覆盖根目录下所有目录和文件
+  - 示例格式：
+    ```
+    web-security/
+    └── authentication/
+        ├── why-bearer.md
+        └── jwt/
+            ├── dual-token【RLSys】.md
+            ├── 深化/
+            │   ├── stateless-myth.md
+            │   └── jwt-vs-oauth.md
+            └── 快速投产/
+                ├── auth0.md
+                └── pyjwt-fastapi.md
+    ```
 
 ### history (历史脉络)
 **Trigger:** User explicitly requests.
