@@ -153,24 +153,24 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
 - Ensure progressive layering (broad → specific)
 - **移动文件前先判断位置语义** — 文件的层级表达其概念范畴（如 `authentication/why-bearer.md` 表示 Bearer 是认证层概念）。位置语义正确的不动，语义错位的才移动（如 `ai-llm/llm-application/jwt/` 放错了领域）
 - **自动生成知识索引**：organize 完成后，在根目录生成 `INDEX.md`
-  - 采用目录树格式（`├──` `└──` `│`），完整呈现目录层级结构
-  - 每个**主题目录**（含 README.md 的目录）显示为可点击链接；普通目录和文件显示为纯文本
-  - Mode 目录名用中文：`深化/` (deepen)、`快速投产/` (mastery)；仅在实际存在时显示
-  - **必须保留所有中间目录层级** — 即使某目录没有自己的 README.md，只要它是实际存在的目录，就必须在树中体现，因为目录层级本身就是语义
+  - Markdown 格式：`##` / `###` 表示层级，`-` 列表项 + `[中文名](英文路径)` 链接
+  - **中文名称基于内容理解，不是翻译文件名** — 必须阅读每个文档的内容，根据它实际在讲什么来命名。名称应同时满足两个条件：(1) 独立阅读时能准确传达文档核心议题；(2) 在其层级位置上有语义——位置本身就表达了"它属于哪个范畴"。例如 `authentication` 在 `web-security` 下不是泛泛的"认证"，而是"身份认证"这个安全子领域
+  - Mode 分类名用中文：`深化` (deepen)、`快速投产` (mastery)；仅在实际存在时显示
+  - **必须保留所有中间目录层级** — 即使某目录没有自己的 README.md，只要它是实际存在的目录，就必须作为 `###` 层级体现，因为目录层级本身就是语义
   - 完全覆盖根目录下所有目录和文件
   - 示例格式：
-    ```
-    web-security/
-    └── authentication/
-        ├── why-bearer.md
-        └── jwt/
-            ├── dual-token【RLSys】.md
-            ├── 深化/
-            │   ├── stateless-myth.md
-            │   └── jwt-vs-oauth.md
-            └── 快速投产/
-                ├── auth0.md
-                └── pyjwt-fastapi.md
+    ```markdown
+    ## Web安全
+
+    ### 身份认证
+
+    - [为什么token前面要加Bearer](web-security/authentication/why-bearer.md)
+    - [JWT认证全景](web-security/authentication/jwt/README.md)
+      - [双Token机制——安全刷新与撤销的完整方案【RLSys】](web-security/authentication/jwt/dual-token【RLSys】.md)
+      - 深化
+        - [JWT"无状态"在生产中的真实边界](web-security/authentication/jwt/deepen/stateless-myth.md)
+      - 快速投产
+        - [PyJWT + FastAPI 认证实战](web-security/authentication/jwt/mastery/pyjwt-fastapi.md)
     ```
 
 ### history (历史脉络)
