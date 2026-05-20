@@ -8,14 +8,17 @@
 
 不是详细的技术文档，而是一个帮你理解技术本质的知识地图。每个技术主题按其内在概念关系层层递进组织，顺着问题驱动的演化脉络，用第一性原理讲清楚。
 
-## 四种模式
+## 七种模式
 
 | 模式 | 说明 |
 |------|------|
 | **enrich** (归档) | 完成技术模块后，轻量归档 — 推导层级、创建目录、写入本质 |
-| **deepen** (丰富化) | 指定某个主题深入展开细节 |
-| **organize** (整理) | 重新梳理目录结构，按逻辑关系组织 |
+| **mastery** (快速投产) | 用现成工具快速接入生产，30 分钟跑通，可累积多种方式 |
+| **deepen** (深化) | 问题驱动深入理解，生成有深度的候选问题，写出有论证的分析文档 |
+| **walk** (漫步) | 漫步知识树，觉察已有知识的覆盖、连接和缺口 |
+| **organize** (整理) | 按逻辑关系重组目录结构，自动生成知识索引 (INDEX.md) |
 | **history** (历史脉络) | 为指定主题补充历史发展脉络 |
+| **interview** (面试题) | 从 deepen 文档提取面试题到 CSV，自动评定难度 |
 
 ## 配置
 
@@ -41,6 +44,12 @@
   web-security/
     authentication/
       jwt/
-        README.md           # JWT 的本质：从 Session 到无状态认证的演化
-        dual-token.md       # 双 Token 机制的具体实现方案
+        README.md                     # JWT 的本质：从 Session 到无状态认证的演化
+        dual-token【RLSys】.md       # 双 Token 机制的具体实现方案
+        mastery/
+          jsonwebtoken.md             # 用 jsonwebtoken 库接入
+          auth0.md                    # 用 Auth0 SaaS 接入
+        deepen/
+          stateless-myth.md           # 「无状态」真的是优势吗？
+          key-rotation.md             # 密钥轮换怎么做？
 ```
