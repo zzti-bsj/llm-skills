@@ -115,7 +115,7 @@ jwt/
    - 用专业术语但不晦涩
 3. 向用户展示候选问题，用户选择要深入哪些
 4. 为每个选定的问题写文档，遵循写作框架：
-   - **文件名 = 问题本身**（kebab-case 英文，如 `stateless-myth.md`）
+   - **文件名 = 问题本身**（kebab-case 英文，如 `deepen/stateless-myth.md`）
    - **开宗明义**：第一段直接回答问题，给出结论
    - **展开论证**：用推理和事实支撑
    - **关联 README**：显式引用 README 中的概念
@@ -220,7 +220,8 @@ docs/
         mastery/
           jsonwebtoken.md               # mastery 第1次：用 jsonwebtoken 库接入
           auth0.md                      # mastery 第2次：用 Auth0 SaaS 接入
-        stateless-myth.md               # deepen：「无状态」真的是优势吗？
-        jwt-vs-session-real-world.md    # deepen：生产环境怎么选？
-        key-rotation【RLSys】.md        # deepen：密钥轮换
+        deepen/
+          stateless-myth.md             # 「无状态」真的是优势吗？
+          jwt-vs-session-real-world.md  # 生产环境怎么选？
+          key-rotation【RLSys】.md      # 密钥轮换
 ```
