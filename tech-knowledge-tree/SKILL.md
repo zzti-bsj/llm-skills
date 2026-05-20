@@ -1,6 +1,6 @@
 ---
 name: tech-knowledge-tree
-description: Two categories of triggers. (1) Project-bound: after completing a technical module in current conversation/project, archive it into the knowledge tree (enrich). (2) Abstract/project-independent: quickly learn how to integrate a technology into production using existing tools (mastery), deepen understanding through question-driven analysis (deepen), extract interview questions from deepen documents (interview), walk the knowledge tree to discover gaps (walk), organize directory structure and generate knowledge index, or add historical evolution context. All abstract modes operate on the knowledge tree itself, not on current project context.
+description: Two categories of triggers. (1) Project-bound: after completing a technical module in current conversation/project, archive it into the knowledge tree (enrich). (2) Abstract/project-independent: quickly learn how to integrate a technology into production using existing tools (mastery), deepen understanding through question-driven analysis (deepen), generate interview questions based on knowledge tree (interview), walk the knowledge tree to discover gaps (walk), organize directory structure and generate knowledge index, or add historical evolution context. All abstract modes operate on the knowledge tree itself, not on current project context.
 ---
 
 # Tech Knowledge Tree
@@ -19,8 +19,7 @@ Commands:
   deepen <topic>     问题驱动深入理解
   walk <topic>       漫步知识树，发现遗漏和连接
   walk /             扫描整棵知识树
-  interview          扫描所有 deepen 文档，提取面试题
-  interview <topic>  扫描指定 topic 的 deepen 文档
+  interview <topic>  生成面向高级工程师/架构师的面试题
   organize           按逻辑关系重组目录结构
   history <topic>    添加历史演进脉络
 
@@ -180,22 +179,32 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
 - Trace the evolution thread of the technology
 
 ### interview (面试题)
-**Trigger:** User says "interview", "面试题", or "面试".
+**Trigger:** User says "interview", "面试题", or "面试"，**必须带 topic 参数**。
 
-**Philosophy:** 从深化文档中提取面试题。Deepen 的问题驱动分析天然适合面试场景。
+**Philosophy:** 面向高级开发工程师和架构师，基于对知识树的深度理解生成考察生产决策力的面试题。
 
 **流程：**
 
-1. 调用 `interview.py scan [--topic <topic>]`，扫描 deepen 文档并追加到 `questions.csv`
-2. 报告新增了多少条面试题
-3. 读取 CSV 中 difficulty 为空的条目
-4. 逐条阅读 content，评定难度（入门 / 简单 / 中等 / 困难 / 非常困难）
-5. 调用 `interview.py set-difficulty <title> <difficulty>` 写回
-6. 完成后报告统计
+1. 定位 topic 目录（如 `interview jwt` → 搜索知识树中 `jwt` 目录）
+2. 读取该目录下**所有文档**（README、enrich、deepen、mastery），形成完整理解
+3. **范围判断**：如果该 topic 覆盖的知识范畴过大（如 `web-security`），无法生成有针对性的高质量面试题，则：
+   - 列出该 topic 下的子目录
+   - 建议用户指定更具体的范围
+   - 不强行生成
+4. 基于对文档内容的深度理解，生成 N 道面试题（数量自适应，取决于内容丰富度）
+5. 每道题目考察的应是：
+   - 生产中的设计决策（选型、取舍、边界判断）
+   - 架构层面的思考（分布式、高并发、安全等）
+   - 从「知道」到「能做」的工程转化能力
+   - **不是**事实回忆，**不是**概念解释
+6. 调用 `interview.py add` 逐条写入 `questions.csv`（自动去重）
+7. 完成后报告统计
 
-**调用方式：**
-- `interview` — 扫描整个知识树
-- `interview <topic>` — 扫描指定 topic
+**CSV 格式：** `title,tags,category,difficulty`
+- title：面试题本身（问句形式，中文）
+- tags：直接父目录名
+- category：顶级目录名
+- difficulty：生成时直接评定
 
 **难度级别：**
 
@@ -239,14 +248,14 @@ deepen（深化）  → 深化理解（问题驱动分析）
 walk（漫步）    → 觉察知识（发现遗漏和连接）
 organize（整理）→ 重组知识（按逻辑关系调整结构）+ 生成知识索引
 history（脉络） → 追溯知识（添加历史演进上下文）
-interview（面试）→ 提取面试题（从 deepen 文档，CSV 格式）
+interview（面试）→ 生成面试题（基于知识树深度理解，CSV 格式）
 ```
 
 Walk 发现的问题 → Deepen 解答。
 Deepen 新增的文档可能触发 → Organize 重构。
 History 添加的演进脉络可以成为 → Deepen 的素材。
 Mastery 的多种接入方式 → 互补覆盖，每种对应不同场景。
-Interview 的输入源是 → Deepen 的分析文档。
+Interview 的输入源是 → 整个 topic 目录下的全部文档。
 
 ## Example
 

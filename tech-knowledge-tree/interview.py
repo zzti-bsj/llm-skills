@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Interview question extractor for tech-knowledge-tree skill.
+"""Interview question manager for tech-knowledge-tree skill.
 
 Usage:
-    interview.py scan [--topic <topic>]
+    interview.py add <title> <tags> <category> <difficulty>
     interview.py set-difficulty <title> <difficulty>
 """
 
@@ -12,61 +12,12 @@ import os
 import sys
 from pathlib import Path
 
+FIELDNAMES = ["title", "tags", "category", "difficulty"]
+
 
 def get_docs_root() -> Path:
     """Get knowledge tree root from TECH_DOCS_PATH env var."""
     return Path(os.environ.get("TECH_DOCS_PATH", os.path.expanduser("~/Project/docs")))
-
-
-def extract_title(filepath: Path) -> str:
-    """Extract title from first non-empty line of a deepen document.
-
-    Deepen docs open with a conclusion statement that serves as the question.
-    Skips markdown headings (lines starting with #) to get the actual content.
-    """
-    with open(filepath, "r", encoding="utf-8") as f:
-        for line in f:
-            stripped = line.strip()
-            if stripped and not stripped.startswith("#"):
-                return stripped.rstrip("。！？") + "？"
-    return filepath.stem
-
-
-def derive_tags(deepen_dir: Path, root: Path) -> str:
-    """Derive tags from direct parent directory name of the deepen directory.
-
-    Example: root/authentication/jwt/deepen/ -> 'jwt'
-    """
-    parent = deepen_dir.parent
-    return parent.name
-
-
-def derive_category(deepen_dir: Path, root: Path) -> str:
-    """Derive category from top-level directory name.
-
-    Example: root/authentication/jwt/deepen/ -> 'authentication'
-    """
-    try:
-        return deepen_dir.relative_to(root).parts[0]
-    except ValueError:
-        return ""
-
-
-def find_deepen_dirs(root: Path, topic: str | None = None) -> list[Path]:
-    """Find all deepen/ directories, optionally filtered by topic."""
-    deepen_dirs = []
-    if topic:
-        # Search for a directory named <topic> anywhere under root
-        for dirpath, dirnames, filenames in os.walk(root):
-            if os.path.basename(dirpath) == topic or dirpath.endswith(f"/{topic}"):
-                candidate = Path(dirpath) / "deepen"
-                if candidate.is_dir():
-                    deepen_dirs.append(candidate)
-    else:
-        for dirpath, dirnames, filenames in os.walk(root):
-            if os.path.basename(dirpath) == "deepen":
-                deepen_dirs.append(Path(dirpath))
-    return deepen_dirs
 
 
 def load_existing_titles(csv_path: Path) -> set[str]:
@@ -81,53 +32,29 @@ def load_existing_titles(csv_path: Path) -> set[str]:
     return titles
 
 
-def cmd_scan(args):
-    """Scan deepen directories and append new questions to CSV."""
+def cmd_add(args):
+    """Add a single interview question to CSV."""
     root = get_docs_root()
     csv_path = root / "questions.csv"
 
-    deepen_dirs = find_deepen_dirs(root, args.topic)
-    if not deepen_dirs:
-        print(f"No deepen directories found{' for topic: ' + args.topic if args.topic else ''}.")
-        return
-
     existing_titles = load_existing_titles(csv_path)
-    new_entries = []
-
-    for deepen_dir in deepen_dirs:
-        tags = derive_tags(deepen_dir, root)
-        category = derive_category(deepen_dir, root)
-
-        for md_file in sorted(deepen_dir.glob("*.md")):
-            title = extract_title(md_file)
-            if title in existing_titles:
-                continue
-
-            with open(md_file, "r", encoding="utf-8") as f:
-                content = f.read().strip()
-
-            new_entries.append({
-                "title": title,
-                "content": content,
-                "tags": tags,
-                "category": category,
-                "difficulty": "",
-            })
-            existing_titles.add(title)
-
-    if not new_entries:
-        print("No new interview questions found.")
+    if args.title in existing_titles:
+        print(f"Duplicate (skipped): {args.title[:60]}...")
         return
 
     file_exists = csv_path.exists()
     with open(csv_path, "a", encoding="utf-8", newline="") as f:
-        fieldnames = ["title", "content", "tags", "category", "difficulty"]
-        writer = csv.DictWriter(f, fieldnames=fieldnames, quoting=csv.QUOTE_ALL)
+        writer = csv.DictWriter(f, fieldnames=FIELDNAMES, quoting=csv.QUOTE_ALL)
         if not file_exists:
             writer.writeheader()
-        writer.writerows(new_entries)
+        writer.writerow({
+            "title": args.title,
+            "tags": args.tags,
+            "category": args.category,
+            "difficulty": args.difficulty,
+        })
 
-    print(f"Added {len(new_entries)} interview question(s) to {csv_path}")
+    print(f"Added: {args.title[:60]}...")
 
 
 def cmd_set_difficulty(args):
@@ -159,15 +86,18 @@ def cmd_set_difficulty(args):
         writer.writeheader()
         writer.writerows(rows)
 
-    print(f"Updated difficulty for: {args.title}")
+    print(f"Updated difficulty for: {args.title[:60]}...")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Interview question extractor")
+    parser = argparse.ArgumentParser(description="Interview question manager")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    scan_parser = subparsers.add_parser("scan", help="Scan deepen docs and extract questions")
-    scan_parser.add_argument("--topic", help="Only scan a specific topic")
+    add_parser = subparsers.add_parser("add", help="Add an interview question")
+    add_parser.add_argument("title", help="Question title")
+    add_parser.add_argument("tags", help="Tags (direct parent dir name)")
+    add_parser.add_argument("category", help="Category (top-level dir name)")
+    add_parser.add_argument("difficulty", help="Difficulty level")
 
     diff_parser = subparsers.add_parser("set-difficulty", help="Set difficulty for a question")
     diff_parser.add_argument("title", help="Question title to update")
@@ -175,8 +105,8 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == "scan":
-        cmd_scan(args)
+    if args.command == "add":
+        cmd_add(args)
     elif args.command == "set-difficulty":
         cmd_set_difficulty(args)
 
