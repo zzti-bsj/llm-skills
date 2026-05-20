@@ -1,6 +1,6 @@
 ---
 name: tech-knowledge-tree
-description: Two categories of triggers. (1) Project-bound: after completing a technical module in current conversation/project, archive it into the knowledge tree (enrich). (2) Abstract/project-independent: quickly learn how to integrate a technology into production using existing tools (mastery), deepen understanding through question-driven analysis (deepen), walk the knowledge tree to discover gaps (walk), organize directory structure, or add historical evolution context. All abstract modes operate on the knowledge tree itself, not on current project context.
+description: Two categories of triggers. (1) Project-bound: after completing a technical module in current conversation/project, archive it into the knowledge tree (enrich). (2) Abstract/project-independent: quickly learn how to integrate a technology into production using existing tools (mastery), deepen understanding through question-driven analysis (deepen), extract interview questions from deepen documents (interview), walk the knowledge tree to discover gaps (walk), organize directory structure and generate knowledge index, or add historical evolution context. All abstract modes operate on the knowledge tree itself, not on current project context.
 ---
 
 # Tech Knowledge Tree
@@ -19,12 +19,15 @@ Commands:
   deepen <topic>     问题驱动深入理解
   walk <topic>       漫步知识树，发现遗漏和连接
   walk /             扫描整棵知识树
+  interview          扫描所有 deepen 文档，提取面试题
+  interview <topic>  扫描指定 topic 的 deepen 文档
   organize           按逻辑关系重组目录结构
   history <topic>    添加历史演进脉络
 
 Options:
   refresh            mastery: 换一种接入方式
   #N                 deepen: 直接写第 N 个候选问题的文档
+  scan               interview: AI 调用 interview.py scan 扫描文档
 ```
 
 用户不需要记住命令——用自然语言描述意图，系统自动匹配模式。
@@ -45,8 +48,8 @@ Core purpose: **肃清本源，形成知识图谱，起指引作用。** Not a c
 ### 项目绑定：enrich（归档）
 enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知识，输入源是「你刚刚做了什么」。
 
-### 抽象操作：mastery / deepen / walk / organize / history
-这五个模式与当前项目无关。输入源是知识树本身，不关心你在做什么项目。
+### 抽象操作：mastery / deepen / walk / organize / history / interview
+这六个模式与当前项目无关。输入源是知识树本身，不关心你在做什么项目。
 
 ---
 
@@ -149,12 +152,46 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
 - Scan directory structure only, not content
 - Reorganize by logical relationships between topics
 - Ensure progressive layering (broad → specific)
+- **自动生成知识索引**：organize 完成后，在根目录生成 `INDEX.md`
+  - 中文层级结构 + 可点击链接
+  - Mode 名称用中文：深化 (deepen)、快速投产 (mastery)
+  - 无描述，纯结构，每个文件都是锚点
+  - 仅在对应子目录存在时显示该 mode 分类（如无 deepen/ 则不显示"深化"）
+  - 完全覆盖根目录下所有目录和文件
 
 ### history (历史脉络)
 **Trigger:** User explicitly requests.
 
 - Add historical development context for a specified topic
 - Trace the evolution thread of the technology
+
+### interview (面试题)
+**Trigger:** User says "interview", "面试题", or "面试".
+
+**Philosophy:** 从深化文档中提取面试题。Deepen 的问题驱动分析天然适合面试场景。
+
+**流程：**
+
+1. 调用 `interview.py scan [--topic <topic>]`，扫描 deepen 文档并追加到 `questions.csv`
+2. 报告新增了多少条面试题
+3. 读取 CSV 中 difficulty 为空的条目
+4. 逐条阅读 content，评定难度（入门 / 简单 / 中等 / 困难 / 非常困难）
+5. 调用 `interview.py set-difficulty <title> <difficulty>` 写回
+6. 完成后报告统计
+
+**调用方式：**
+- `interview` — 扫描整个知识树
+- `interview <topic>` — 扫描指定 topic
+
+**难度级别：**
+
+| 级别 | 含义 |
+|------|------|
+| 入门 | 基础概念认知 |
+| 简单 | 基本理解和应用 |
+| 中等 | 需要实际经验 |
+| 困难 | 架构/设计层面 |
+| 非常困难 | 深度理解，挑战常规 |
 
 ## README Writing Style
 
@@ -186,14 +223,16 @@ enrich（归档）  → 创建知识（README + 实现文档）
 mastery（投产） → 快速接入（多种方式，可累积）
 deepen（深化）  → 深化理解（问题驱动分析）
 walk（漫步）    → 觉察知识（发现遗漏和连接）
-organize（整理）→ 重组知识（按逻辑关系调整结构）
+organize（整理）→ 重组知识（按逻辑关系调整结构）+ 生成知识索引
 history（脉络） → 追溯知识（添加历史演进上下文）
+interview（面试）→ 提取面试题（从 deepen 文档，CSV 格式）
 ```
 
 Walk 发现的问题 → Deepen 解答。
 Deepen 新增的文档可能触发 → Organize 重构。
 History 添加的演进脉络可以成为 → Deepen 的素材。
 Mastery 的多种接入方式 → 互补覆盖，每种对应不同场景。
+Interview 的输入源是 → Deepen 的分析文档。
 
 ## Example
 
