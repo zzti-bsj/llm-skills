@@ -1,6 +1,6 @@
 ---
 name: tech-knowledge-tree
-description: Two categories of triggers. (1) Project-bound: after completing a technical module in current conversation/project, archive it into the knowledge tree (enrich). (2) Abstract/project-independent: quickly learn how to integrate a technology into production using existing tools (mastery), deepen understanding through question-driven analysis (deepen), generate interview questions based on knowledge tree (interview), walk the knowledge tree to discover gaps (walk), organize directory structure and generate knowledge index, or add historical evolution context. All abstract modes operate on the knowledge tree itself, not on current project context.
+description: Two categories of triggers. (1) Project-bound: after completing a technical module in current conversation/project, archive it into the knowledge tree (enrich). (2) Abstract/project-independent: quickly learn how to integrate a technology into production using existing tools (mastery), deepen understanding through question-driven analysis (deepen), polish document quality including writing and code correctness (optimize), generate interview questions based on knowledge tree (interview), walk the knowledge tree to discover gaps (walk), organize directory structure and generate knowledge index, or add historical evolution context. All abstract modes operate on the knowledge tree itself, not on current project context.
 ---
 
 # Tech Knowledge Tree
@@ -17,6 +17,7 @@ Commands:
   enrich <tech>      归档刚做完的技术模块
   mastery <topic>    快速接入生产（可多次，累积不同方式）
   deepen <topic>     问题驱动深入理解
+  optimize <topic>   打磨已有文档的质量（目录级或文件级）
   walk <topic>       漫步知识树，发现遗漏和连接
   walk /             扫描整棵知识树
   interview <topic>  生成面向高级工程师/架构师的面试题
@@ -26,6 +27,7 @@ Commands:
 Options:
   refresh            mastery: 换一种接入方式
   #N                 deepen: 直接写第 N 个候选问题的文档
+  #N                 optimize: 直接执行第 N 条修改建议
 ```
 
 用户不需要记住命令——用自然语言描述意图，系统自动匹配模式。
@@ -46,8 +48,8 @@ Core purpose: **肃清本源，形成知识图谱，起指引作用。** Not a c
 ### 项目绑定：enrich（归档）
 enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知识，输入源是「你刚刚做了什么」。
 
-### 抽象操作：mastery / deepen / walk / organize / history / interview
-这六个模式与当前项目无关。输入源是知识树本身，不关心你在做什么项目。
+### 抽象操作：mastery / deepen / optimize / walk / organize / history / interview
+这七个模式与当前项目无关。输入源是知识树本身，不关心你在做什么项目。
 
 ---
 
@@ -143,6 +145,42 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
 3. 用户决定下一步：什么都不做 / deepen 某个问题 / 其他
 
 话题解析：`walk jwt` 搜索 docs/ 树中名为 `jwt` 的目录；`walk /` 扫描整棵树；未找到则提示先运行 enrich。
+
+### optimize (打磨)
+**Trigger:** 用户指定一个 topic 目录或具体文件，要求优化质量。
+
+**Philosophy:** 在已有文档上打磨质量。不创建新文档、不移动文件——只诊断问题、提出修改建议，由用户决定是否执行。
+
+**与相邻模式的边界：**
+- organize 管**目录层级和文件移动**，optimize 不管结构
+- deepen 管**新建深化文档**，optimize 管已有文档的**内容质量**
+- walk 输出知识覆盖的觉察，optimize 输出具体到段落和代码行的修改建议
+
+**两种工作模式：**
+
+#### 目录级（`optimize <topic>`）
+
+对指定 topic 目录下的文档组成和关系进行质量审查：
+
+1. 读取该目录下所有文档
+2. 输出**打磨报告**：
+   - **文档间关系**：是否有重复内容、交叉引用是否准确、逻辑递进是否合理（README → 具体实现 → 深化 → 快速投产的递进链是否通顺）
+   - **覆盖完整性**：README 讲了本质后，具体实现文档是否覆盖了关键场景；深化文档的方向是否互补
+   - **一致性**：术语、命名、代码风格是否统一；同一概念在不同文档中的描述是否矛盾
+   - **具体修改建议**：每条建议说明「改哪个文件」「改什么」「为什么改」（带编号，可直接 `optimize <topic> #N` 执行）
+3. 用户决定：选择要执行的修改 / 全部执行 / 不执行
+
+#### 文件级（`optimize <topic> <file>` 或指定具体文件路径）
+
+对指定文档的行文质量、代码正确性进行打磨：
+
+1. 读取目标文件及其上下文（同目录下的 README 和相关文档）
+2. 输出**打磨报告**：
+   - **行文质量**：论证是否充分、逻辑是否连贯、是否有空话套话、标题是否准确传达内容
+   - **代码正确性**：示例是否能跑通、是否有 bug、是否遵循最佳实践（如同目录下 deepen 文档指出的陷阱是否在代码中被正确处理）
+   - **内容准确性**：技术描述是否有过时或错误、与同目录下其他文档的交叉引用是否准确
+   - **具体修改建议**：每条建议给出具体的修改内容（带编号，可直接 `optimize <topic> <file> #N` 执行）
+3. 用户决定：选择要执行的修改 / 全部执行 / 不执行
 
 ### organize (整理)
 **Trigger:** User asks to restructure.
@@ -245,6 +283,7 @@ The README in each topic directory is the most important document. It should:
 enrich（归档）  → 创建知识（README + 实现文档）
 mastery（投产） → 快速接入（多种方式，可累积）
 deepen（深化）  → 深化理解（问题驱动分析）
+optimize（打磨）→ 质量审查（行文、代码、文档间关系）
 walk（漫步）    → 觉察知识（发现遗漏和连接）
 organize（整理）→ 重组知识（按逻辑关系调整结构）+ 生成知识索引
 history（脉络） → 追溯知识（添加历史演进上下文）
@@ -252,7 +291,8 @@ interview（面试）→ 生成面试题（基于知识树深度理解，CSV 格
 ```
 
 Walk 发现的问题 → Deepen 解答。
-Deepen 新增的文档可能触发 → Organize 重构。
+Deepen / enrich 新增的文档 → Optimize 打磨质量。
+Optimize 发现的结构问题 → Organize 重组。
 History 添加的演进脉络可以成为 → Deepen 的素材。
 Mastery 的多种接入方式 → 互补覆盖，每种对应不同场景。
 Interview 的输入源是 → 整个 topic 目录下的全部文档。
