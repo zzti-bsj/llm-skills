@@ -72,11 +72,11 @@ enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知
 ### mastery (快速投产)
 **Trigger:** User wants to quickly learn how to integrate a technology into production.
 
-**Philosophy:** 用现成工具快速接入，不造轮子。30 分钟内跑通，验证效果。
+**Philosophy:** 用现成工具快速接入生产，不造轮子。内容服务于真实场景，代码可直接落地。
 
 **核心原则：**
 - 不手撸底层实现——用成熟的库和服务
-- 追求最快接入路径——30 分钟内看到效果
+- 场景来自真实企业痛点，代码是可运行的生产级代码（不是伪代码或省略片段）
 - 理解和底层原理不是 mastery 的职责，那是 deepen 的事
 
 **流程：**
@@ -84,15 +84,14 @@ enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知
 1. Read all existing docs in the topic directory（避免重复已有内容）
 2. 确定一种接入方式（选择主流的、生产验证过的库/服务）
 3. Generate a `mastery/<approach>.md` containing:
-   - **场景（Scenario）**: 真实应用场景（不是抽象练习题）
+   - **场景（Scenario）**: 真实企业应用场景与痛点（不是抽象练习题或 Hello World）
    - **目标（Target）**: 完成后的可验证交付物
    - **技术选型（Tooling）**: 使用的具体库/服务及理由
    - **参考资料（References）**: 官方文档、GitHub repo、API reference 等链接锚点
-   - **分步引导（Steps）**: 每步包含「做什么」「怎么做」「为什么」
-4. 分步数量 3-6 步，每步 5-10 分钟
-5. 文件命名体现接入方式，如 `mastery-jsonwebtoken.md`、`mastery-auth0.md`
-6. 每次调用生成一种新的接入方式，可累积多个 mastery 文档
-7. 用户说 `refresh` → 重新生成一种不同的接入方式
+   - **分步引导（Steps）**: 每步包含「做什么」「怎么做」「为什么」。代码必须完整可运行，不做人为压缩
+4. 文件命名体现接入方式，如 `jsonwebtoken.md`、`auth0.md`
+5. 每次调用生成一种新的接入方式，可累积多个 mastery 文档
+6. 用户说 `refresh` → 重新生成一种不同的接入方式
 
 **多方式累积示例：**
 ```
@@ -164,7 +163,7 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
 
 1. 读取该目录下所有文档
 2. 输出**打磨报告**：
-   - **文档间关系**：是否有重复内容、交叉引用是否准确、逻辑递进是否合理（README → 具体实现 → 深化 → 快速投产的递进链是否通顺）
+   - **文档间关系**：是否有重复内容、交叉引用是否准确、逻辑递进是否合理（README → 具体实现 → deepen → mastery 的递进链是否通顺）
    - **覆盖完整性**：README 讲了本质后，具体实现文档是否覆盖了关键场景；深化文档的方向是否互补
    - **一致性**：术语、命名、代码风格是否统一；同一概念在不同文档中的描述是否矛盾
    - **具体修改建议**：每条建议说明「改哪个文件」「改什么」「为什么改」（带编号，可直接 `optimize <topic> #N` 执行）
@@ -192,7 +191,7 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
 - **自动生成知识索引**：organize 完成后，在根目录生成 `INDEX.md`
   - Markdown 格式：`##` / `###` 表示层级，`-` 列表项 + `[中文名](英文路径)` 链接
   - **中文名称基于内容理解，不是翻译文件名** — 必须阅读每个文档的内容，根据它实际在讲什么来命名。名称应同时满足两个条件：(1) 独立阅读时能准确传达文档核心议题；(2) 在其层级位置上有语义——位置本身就表达了"它属于哪个范畴"。例如 `authentication` 在 `web-security` 下不是泛泛的"认证"，而是"身份认证"这个安全子领域
-  - Mode 分类名用中文：`深化` (deepen)、`快速投产` (mastery)；仅在实际存在时显示
+  - Mode 目录名用英文：`deepen`、`mastery`；仅在实际存在时显示
   - **必须保留所有中间目录层级** — 即使某目录没有自己的 README.md，只要它是实际存在的目录，就必须作为 `###` 层级体现，因为目录层级本身就是语义
   - 完全覆盖根目录下所有目录和文件
   - 示例格式：
@@ -204,9 +203,9 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
     - [为什么token前面要加Bearer](web-security/authentication/why-bearer.md)
     - [JWT认证全景](web-security/authentication/jwt/README.md)
       - [双Token机制——安全刷新与撤销的完整方案【RLSys】](web-security/authentication/jwt/dual-token【RLSys】.md)
-      - 深化
+      - deepen
         - [JWT"无状态"在生产中的真实边界](web-security/authentication/jwt/deepen/stateless-myth.md)
-      - 快速投产
+      - mastery
         - [PyJWT + FastAPI 认证实战](web-security/authentication/jwt/mastery/pyjwt-fastapi.md)
     ```
 
