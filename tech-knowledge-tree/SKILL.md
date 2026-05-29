@@ -38,6 +38,10 @@ Maintain a living knowledge tree that organizes technologies by conceptual hiera
 
 Core purpose: **肃清本源，形成知识图谱，起指引作用。** Not a comprehensive reference, but a compass.
 
+The tree is a **cognitive scaffold**, not a filing cabinet. Every node's position—what's above it, what's beside it, what's below it—is part of the knowledge itself. When the reader navigates the tree, they're not looking up information; they're building neural pathways. The structure IS the content.
+
+This principle has a concrete implication: **叙事中的每个关键节点必须有物理存在。** A concept mentioned in a README but without a corresponding directory is a broken promise to the reader's brain—it creates a gap where a neuron should be. The knowledge map in each README (see below) is the mechanism that keeps narrative and structure in sync.
+
 ## Path Configuration
 - Configurable via environment variable `TECH_DOCS_PATH`
 - Default: `~/Project/docs`
@@ -59,15 +63,21 @@ enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知
 **Trigger:** After completing a technical module.
 
 1. Analyze the technology's conceptual chain (e.g., JWT → Authentication → Web Security)
-2. Scan existing `docs/` structure
-3. Match from most specific to broadest:
+2. **触达扫描**：扫描整棵知识树（不只是当前分支），识别该技术与已有节点的关系
+   - 父层级：这个技术属于哪个更宽泛的领域？该领域目录是否已存在？
+   - 同层级：它的兄弟概念是什么？是否已有目录？
+   - 子层级：这个技术内部有哪些可独立展开的关键节点？
+   - 跨分支：其他分支中是否有相关概念，将来可以形成横向触达？
+3. 基于触达结果确定放置位置（Match from most specific to broadest）：
    - Deepest matching directory exists → nest under it
    - Partial match → extend from the matching point
    - No match → create full hierarchy
 4. **Each technology = directory**, not a file
 5. Write `README.md` following problem-driven evolution style (see below)
+   - 从叙事中提取关键节点，生成**知识地图表**（见 README Writing Style 下的 Knowledge Map 节）
 6. Write specific implementation doc, named by topic + project tag (e.g., `dual-token【RLSys】.md`)
-7. Keep it lightweight — only the essence, don't over-document
+7. **向上传播**：更新父目录 README 的知识地图表，将新节点插入正确位置（保持叙事顺序）
+8. Keep it lightweight — only the essence, don't over-document
 
 ### mastery (快速投产)
 **Trigger:** User wants to quickly learn how to integrate a technology into production.
@@ -122,6 +132,7 @@ jwt/
    - **展开论证**：用推理和事实支撑
    - **关联 README**：显式引用 README 中的概念
    - 中文内容，英文文件名
+5. **候选子节点检测**：如果深化过程中发现了一个独立的、值得单独展开的子概念（不属于当前文档的范畴，移除后当前叙事仍然完整），提示用户："发现候选节点 'xxx'，是否创建？"
 
 **三个内在方向**（不是外在分类，是问题自然触达的视角）：
 
@@ -137,11 +148,16 @@ jwt/
 Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输出觉察报告。
 
 1. 通读目标目录下所有文档
-2. 输出**觉察报告**：
+2. **一致性校验**（叙事 × 知识地图 × 物理目录）：
+   - 叙事中提到的关键节点 → 知识地图中有对应条目吗？没有 = **缺口**
+   - 知识地图中的条目 → 物理目录存在吗？不存在 = **空承诺**
+   - 物理目录 → 知识地图中有对应条目吗？没有 = **孤儿**
+3. 输出**觉察报告**：
+   - **一致性**：缺口、空承诺、孤儿的清单（如有）
    - **知识覆盖**：哪些方向已有覆盖、哪些空白
-   - **知识关联**：文档间的连接和断裂
+   - **知识关联**：文档间的连接和断裂，跨分支的潜在触达
    - **候选问题**：值得追问的问题（带编号，可直接 `deepen <topic> #N`）
-3. 用户决定下一步：什么都不做 / deepen 某个问题 / 其他
+4. 用户决定下一步：什么都不做 / deepen 某个问题 / 其他
 
 话题解析：`walk jwt` 搜索 docs/ 树中名为 `jwt` 的目录；`walk /` 扫描整棵树；未找到则提示先运行 enrich。
 
@@ -188,6 +204,7 @@ Walk 是漫步于已有知识之间，在行走中觉察。不生产文档，输
 - Reorganize by logical relationships between topics
 - Ensure progressive layering (broad → specific)
 - **移动文件前先判断位置语义** — 文件的层级表达其概念范畴（如 `authentication/why-bearer.md` 表示 Bearer 是认证层概念）。位置语义正确的不动，语义错位的才移动（如 `ai-llm/llm-application/jwt/` 放错了领域）
+- **重建受影响的知识地图**：organize 移动或重组目录后，更新所有结构变动涉及的 README 知识地图表（确保叙事 × 知识地图 × 物理目录重新一致）
 - **自动生成知识索引**：organize 完成后，在根目录生成 `INDEX.md`
   - Markdown 格式：`##` / `###` 表示层级，`-` 列表项 + `[中文名](英文路径)` 链接
   - **中文名称基于内容理解，不是翻译文件名** — 必须阅读每个文档的内容，根据它实际在讲什么来命名。名称应同时满足两个条件：(1) 独立阅读时能准确传达文档核心议题；(2) 在其层级位置上有语义——位置本身就表达了"它属于哪个范畴"。例如 `authentication` 在 `web-security` 下不是泛泛的"认证"，而是"身份认证"这个安全子领域
@@ -268,9 +285,35 @@ The README in each topic directory is the most important document. It should:
 - List facts without explaining the reasoning behind them
 - Be rigid about format — follow the natural narrative flow of the technology's evolution
 
+### Knowledge Map（知识地图）
+
+README 的叙事按时间线或演进线展开。叙事中提到的每个关键技术、阶段、或独立概念，都是一个**叙事节点**。叙事节点不只是文字——它应该在文件系统中有**物理存在**（子目录）。
+
+README 叙事结束后，用**知识地图表**建立叙事与结构之间的桥接。这是每个非叶子 README 的标准组成部分：
+
+```markdown
+## 知识地图
+
+| 阶段 | 目录 | 一句话 |
+|------|------|--------|
+| 1. 定义"学什么" | [loss-function](loss-function/) | 损失函数：训练的目标 |
+| 2. 决定"怎么学" | [optimization](optimization/) | SGD → Momentum → Adam |
+```
+
+**规则：**
+- **顺序由叙事逻辑决定**（时间线、依赖链、或演进脉络），不是字母序
+- **不是每个术语都需要条目**——只有"独立展开价值"的节点才需要。判断标准：移除这个概念后，叙事链是否断裂？断裂 = 有独立展开价值，不断裂 = 可以活在当前文档里
+- **叶子节点不需要知识地图**——当 README 的叙事中没有需要单独展开的子概念时，不需要此表
+- **后续补充新节点时**，更新此表并调整编号。编号是位置标记，不是身份标识——身份是目录名
+
+**知识地图的本质**：它不是一个额外的索引工具，它是**叙事线的物理投影**。读者看到这个表，就知道父级叙事中的每个关键阶段都有地方可去——这是对大脑的承诺："你可以放心地深入任何一个方向，那里有东西等你。"
+
 ## Key Principles
 
 - **Directory > File**: 新建技术主题时，每个主题是一个目录（含 `README.md`），不是单个文件。已有文件的位置携带语义（层级即语义），organize 时需先理解位置含义再决定是否移动。
+- **叙事即结构**：README 的叙事线决定子目录的存在和顺序。叙事中的关键节点 = 子目录，叙事的逻辑顺序 = 目录的排列顺序。不是先有目录再填内容，而是叙事驱动结构。
+- **向上传播**：创建新节点时，必须更新父目录 README 的知识地图表。每个新节点都是父级叙事的一个落地点——如果父级不知道它存在，神经元就断了。
+- **触达先于创建**：enrich 创建新节点之前，先扫描整棵知识树确定位置。新节点必须在已有结构中找到正确位置，和周围节点建立关系。孤立的节点不会点亮任何神经元。
 - **Lightweight start**: Begin with minimal content, grow as needed
 - **Auto-derive hierarchy**: Don't hardcode top-level categories, let the structure emerge from the technology's conceptual relationships
 - **Chinese content, English directory names**
@@ -279,19 +322,24 @@ The README in each topic directory is the most important document. It should:
 ## Mode Relationships
 
 ```
-enrich（归档）  → 创建知识（README + 实现文档）
+enrich（归档）  → 创建知识（README + 知识地图 + 实现文档）→ 触达扫描确定位置 → 向上传播更新父级
 mastery（投产） → 快速接入（多种方式，可累积）
-deepen（深化）  → 深化理解（问题驱动分析）
-optimize（打磨）→ 质量审查（行文、代码、文档间关系）
-walk（漫步）    → 觉察知识（发现遗漏和连接）
-organize（整理）→ 重组知识（按逻辑关系调整结构）+ 生成知识索引
+deepen（深化）  → 深化理解（问题驱动分析）→ 发现候选子节点时提示创建
+optimize（打磨）→ 质量审查（行文、代码、文档间关系、知识地图一致性）
+walk（漫步）    → 觉察知识（一致性校验 + 发现遗漏和连接）
+organize（整理）→ 重组知识（按逻辑关系调整结构）+ 重建知识地图 + 生成知识索引
 history（脉络） → 追溯知识（添加历史演进上下文）
 interview（面试）→ 生成面试题（基于知识树深度理解，CSV 格式）
 ```
 
-Walk 发现的问题 → Deepen 解答。
-Deepen / enrich 新增的文档 → Optimize 打磨质量。
+Walk 发现的缺口 → enrich 或 deepen 填补。
+Walk 发现的孤儿 → organize 归位。
+Walk 发现的空承诺 → enrich 落地。
+Deepen 发现的候选子节点 → enrich 创建。
+Enrich 创建的新节点 → 向上传播更新父级知识地图。
+Enrich / deepen 新增的文档 → Optimize 打磨质量。
 Optimize 发现的结构问题 → Organize 重组。
+Organize 重组后 → 重建受影响的知识地图。
 History 添加的演进脉络可以成为 → Deepen 的素材。
 Mastery 的多种接入方式 → 互补覆盖，每种对应不同场景。
 Interview 的输入源是 → 整个 topic 目录下的全部文档。
@@ -316,7 +364,7 @@ docs/
   web-security/
     authentication/
       jwt/
-        README.md                       # 本质：为什么存在
+        README.md                       # 本质：为什么存在 + 知识地图表
         dual-token【RLSys】.md         # enrich：具体实现
         mastery/
           jsonwebtoken.md               # mastery 第1次：用 jsonwebtoken 库接入
@@ -325,4 +373,28 @@ docs/
           stateless-myth.md             # 「无状态」真的是优势吗？
           jwt-vs-session-real-world.md  # 生产环境怎么选？
           key-rotation【RLSys】.md      # 密钥轮换
+```
+
+The README's knowledge map might look like:
+
+```markdown
+## 知识地图
+
+| 阶段 | 目录 | 一句话 |
+|------|------|--------|
+| 1. 基础机制 | [dual-token【RLSys】](dual-token【RLSys】.md) | 双 Token：访问 + 刷新的完整方案 |
+| 2. 深层理解 | [deepen/](deepen/) | 无状态的边界、生产选型、密钥轮换 |
+| 3. 生产接入 | [mastery/](mastery/) | jsonwebtoken / Auth0 / NextAuth 多种方式 |
+```
+
+As the tree grows, `walk web-security` would verify consistency:
+
+```
+一致性校验：
+✓ authentication/jwt — 知识地图与物理目录一致
+⚠ authentication/oauth — README 叙事提到 OAuth 但无对应目录（缺口）
+
+知识关联：
+- jwt/deepen/stateless-myth.md 提到"session 的优势"→ 可触达 authentication/session/（如存在）
+- jwt 和 oauth 之间有横向关联（都是认证方案）但尚未建立连接
 ```
