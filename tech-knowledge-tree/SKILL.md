@@ -68,6 +68,7 @@ enrich 是唯一的上下文绑定模式。它从当前对话/项目中提取知
    - 同层级：它的兄弟概念是什么？是否已有目录？
    - 子层级：这个技术内部有哪些可独立展开的关键节点？
    - 跨分支：其他分支中是否有相关概念，将来可以形成横向触达？
+   - **升维规则**：如果触达扫描后判断该概念不适合作为独立节点（已有覆盖、粒度过细、是基础工具而非工程方案等），不要直接拒绝。沿概念链向上追溯，找到最近的有效主题，向用户提议以该主题代替。用户确认后继续 enrich 流程。
 3. 基于触达结果确定放置位置（Match from most specific to broadest）：
    - Deepest matching directory exists → nest under it
    - Partial match → extend from the matching point
@@ -303,6 +304,7 @@ README 叙事结束后，用**知识地图表**建立叙事与结构之间的桥
 **规则：**
 - **顺序由叙事逻辑决定**（时间线、依赖链、或演进脉络），不是字母序
 - **不是每个术语都需要条目**——只有"独立展开价值"的节点才需要。判断标准：移除这个概念后，叙事链是否断裂？断裂 = 有独立展开价值，不断裂 = 可以活在当前文档里
+- **只列概念目录和 enrich 文件，不列 mode 目录**：知识地图映射的是叙事中的关键节点。概念目录（如 `attention/`、`moe/`）和 enrich 实现文件（如 `dual-token【RLSys】.md`）对应叙事阶段，应该列入。`deepen/`、`mastery/` 是概念内部的探索工具，不是叙事阶段——不应出现在知识地图中
 - **叶子节点不需要知识地图**——当 README 的叙事中没有需要单独展开的子概念时，不需要此表
 - **后续补充新节点时**，更新此表并调整编号。编号是位置标记，不是身份标识——身份是目录名
 
@@ -383,9 +385,9 @@ The README's knowledge map might look like:
 | 阶段 | 目录 | 一句话 |
 |------|------|--------|
 | 1. 基础机制 | [dual-token【RLSys】](dual-token【RLSys】.md) | 双 Token：访问 + 刷新的完整方案 |
-| 2. 深层理解 | [deepen/](deepen/) | 无状态的边界、生产选型、密钥轮换 |
-| 3. 生产接入 | [mastery/](mastery/) | jsonwebtoken / Auth0 / NextAuth 多种方式 |
 ```
+
+> 注意：`deepen/` 和 `mastery/` 目录虽然存在，但它们是概念内部的探索工具，不是叙事阶段，因此不出现在知识地图中。
 
 As the tree grows, `walk web-security` would verify consistency:
 
